@@ -6,12 +6,15 @@ _Docker image for running oref0-autotune_
 
 This image is designed to allow you to run `oref0-autotune` ([docs](http://openaps.readthedocs.io/en/latest/docs/Customize-Iterate/autotune.html)) without needing to have a full copy of oref0 installed to your system. I made this image because oref0 can be quite heavy in terms of filesystem and dependency requirements for someone who wants to use the autotune portion of the system. In addition, the setup process can be quite tricky and time consuming if you're trying to use the autotune feature. By using a docker image for this we can make it simple to run as well as clean up afterwards.
 
-It installs the dependencies, and then copies [oref0](https://github.com/openaps/oref0) that you need to check out into this directory.
-
 ### Building the image
 
-You can build this image by navigating into the directory that includes the `Dockerfile` and running 
-```ssh
+Before building the image, navigate into the directory that includes the `Dockerfile` and **clone the oref0 repository**:
+```bash
+git clone https://github.com/openaps/oref0
+```
+
+Then, you can build this image by running: 
+```bash
 docker build -t autotune .
 ```
 
@@ -19,7 +22,7 @@ docker build -t autotune .
 
 This will run autotune on the Nightscout server `https://mynightscout.azurewebsites.net` starting from June 1, 2018 and ending on June 5, 2018. This should give a good example for most people to start off with. 
 
-```ssh
+```bash
 docker run \
     --rm -it \
     --name=autotune \
@@ -38,7 +41,7 @@ Assuming you created a volume for `/data` the recommendations will be output to 
 
 Providing a volume at `/data` in the container will automatically link and use these files and directories. The currently supported files are:
 * `autotune_recommendations.log` - the output of autotune (will be overwritten automatically) 
-* `profile.json` - file telling autotune what settings your pump uses currently. Instructions for how to make this file can be found [here, scrolling down to step 3](http://openaps.readthedocs.io/en/latest/docs/Customize-Iterate/autotune.html#phase-c-running-autotune-for-suggested-adjustments-without-an-openaps-rig)
+* `profile.json` - file telling autotune what settings your pump uses currently. Instructions for how to make this file can be found [here, scrolling down to step 3](http://openaps.readthedocs.io/en/latest/docs/Customize-Iterate/autotune.html#phase-c-running-autotune-for-suggested-adjustments-without-an-openaps-rig). If you don't specify a profile.json file, one will be generated automatically based on the settings from your Nightscout instance.
 
 ```sh
 docker run \

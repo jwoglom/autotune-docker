@@ -20,7 +20,7 @@ ENV TZ=UTC
 
 ################
 
-RUN apk update && apk add bash bc coreutils curl git jq tzdata && \
+RUN apk update && apk add bash bc coreutils curl git jq tzdata python3 py3-requests && \
       mkdir -p /openaps/settings /openaps/autotune && \
       cp /usr/share/zoneinfo/$TZ /etc/localtime && \
       chown -Rh node:node /openaps/ /etc/localtime

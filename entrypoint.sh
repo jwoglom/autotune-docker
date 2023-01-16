@@ -16,13 +16,14 @@ fi
 
 
 if ! [[ -s /data/profile.json ]]; then
-  echo "No profile.json detected, please specify a volume mount for '/data/' and create 'profile.json' in the mount"
-  exit
-else
-  cp /data/profile.json /openaps/settings/profile.json
-  cp /data/profile.json /openaps/settings/pumpprofile.json
-  cp /data/profile.json /openaps/settings/autotune.json
+  echo "No profile.json detected, fetching info from Nightscout..."
+  /oref0/bin/get_profile.py --nightscout $NS_HOST write --directory /data
 fi
+
+cp /data/profile.json /openaps/settings/profile.json
+cp /data/profile.json /openaps/settings/pumpprofile.json
+cp /data/profile.json /openaps/settings/autotune.json
+
 
 TIMEZONE="$(jq '.timezone' /data/profile.json | tr -d \")"
 echo "TIMEZONE: ${TIMEZONE}"
