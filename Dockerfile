@@ -15,10 +15,14 @@ ENV AUTOTUNE_PREFS=""
 # Optional, only necessary if your NS is set to disallow anonymous read access
 ENV API_SECRET=""
 
+# Timezone: should be set to the same value as your Nightscout instance
+ENV TZ=UTC
+
 ################
 
 RUN apk update && apk add bash bc coreutils curl git jq tzdata && \
       mkdir -p /openaps/settings /openaps/autotune && \
+      cp /usr/share/zoneinfo/$TZ /etc/localtime && \
       chown -Rh node:node /openaps/ /etc/localtime
 COPY ./oref0 /oref0
 WORKDIR /oref0

@@ -32,6 +32,7 @@ if [[ "${TIMEZONE}" = "null" ]]; then
 else
   if [[ -f /usr/share/zoneinfo/"${TIMEZONE}" ]]; then
     cp /usr/share/zoneinfo/"${TIMEZONE}" /etc/localtime
+    chown -Rh node:node /etc/localtime
   else
     echo "Nonexistent timezone specified, exiting"
     exit
