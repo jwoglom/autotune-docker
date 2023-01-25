@@ -23,7 +23,7 @@ ENV TZ=UTC
 RUN apk update && apk add bash bc coreutils curl git jq tzdata python3 py3-requests && \
       mkdir -p /openaps/settings /openaps/autotune /data && \
       cp /usr/share/zoneinfo/$TZ /etc/localtime && \
-      chown -Rh node:node /openaps/ /etc/localtime
+      chown -Rh node:node /openaps/ /etc/localtime /data
 COPY ./oref0 /oref0
 WORKDIR /oref0
 RUN npm install -g
