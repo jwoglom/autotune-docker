@@ -50,6 +50,69 @@ docker run \
     autotune
 ```
 
+### Running in Nomad
+
+I use an adaptation of this [Nomad job configuration](https://www.nomadproject.io/) to run autotune every week and send me the results.
+
+```
+job "autotune" {
+    datacenters = ["dc1"]
+
+    type = "batch"
+
+    reschedule {
+        attempts       = 5
+        interval       = "6h"
+        delay          = "30s"
+        delay_function = "exponential"
+        max_delay      = "30m"
+        unlimited      = false
+    }
+
+    periodic {
+        cron = "0 12 * * 6"
+        prohibit_overlap = true
+    }
+
+    group "autotune" {
+        count = 1
+
+        task "autotune" {
+            driver = "docker"
+
+            config {
+                image = "ghcr.io/jwoglom/autotune-docker:v1.0.1"
+                entrypoint = ["bash"]
+                args = [
+                    "-c",
+                    <<EOF
+                        export START_DATE=$(date --date="7 days ago" +%Y-%m-%d) &&
+                        /entrypoint.sh &&
+                        find /openaps/autotune &&
+                        find /data &&
+                        cat /openaps/autotune/autotune_recommendations.log &&
+                        # do something with the log file (email, slack notification, etc)
+                    EOF
+                ]
+            }
+
+            env {
+                NS_HOST = "https://NIGHTSCOUT_URL"
+                TIMEZONE = "America/New_York"
+
+            }
+
+            kill_timeout = "60s"
+
+            resources {
+                cpu = 100
+                memory_max = 300
+            }
+        }
+    }
+}
+```
+
 ### Environment variables
 
 This image works mainly through environment variables. These can be passed through `docker run` by adding `-e` followed by the variable declaration. As an example, adding this to the `docker run` command will set the Nightscout API secret to `hunter2`: `-e "API_SECRET=hunter2"`
